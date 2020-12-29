@@ -2,37 +2,55 @@ import React, { Component } from 'react';
 import Deck from './Deck.js';
 
 const PayTable = (props) => {
-    const { message, messageType, multiplier } = props;
+    const { message, messageType, multiplier, prizes, winningHand } = props;
+
     return (
         <>
             <div className="pay-table">
                 <h2 className="table-title">Pay table</h2>
-                <div className="tb tb-1">
-                    <p className="item-1">Royal flush</p><span className="multiplier">{250 * multiplier}</span>
+                <div className={"tb tb-1 " +
+                    (winningHand === 'royal-flush' ? 'active' : '')}>
+                    <p className="item-1">Royal flush</p><span className="multiplier">{prizes[0].value * multiplier}</span>
                 </div>
-                <div className="tb tb-2">
-                    <p className="item-2">Straight flush</p><span className="multiplier">x50</span>
+                <div className={"tb tb-2 " +
+                    (winningHand === 'straight-flush' ? 'active' : '')}>
+                    <p className="item-2">Straight flush</p><span className="multiplier">
+                        {prizes[1].value * multiplier}</span>
                 </div>
-                <div className="tb tb-3">
-                    <p className="item-3">4 of a kind</p><span className="multiplier">x25</span>
+                <div
+                    className={"tb tb-3 " +
+                        (winningHand === 'four-of-a-kind' ? 'active' : '')}>
+                    <p className="item-3">4 of a kind</p><span className="multiplier">
+                        {prizes[2].value * multiplier}</span>
                 </div>
-                <div className="tb tb-4">
-                    <p className="item-4">Full House</p><span className="multiplier">x9</span>
+                <div className={"tb tb-4 " +
+                    (winningHand === 'full-house' ? 'active' : '')}>
+                    <p className="item-4">Full House</p><span className="multiplier">{prizes[3].value * multiplier}</span>
                 </div>
-                <div className="tb tb-5">
-                    <p className="item-5">Flush</p><span className="multiplier">x6</span>
+                <div className={"tb tb-5 " +
+                    (winningHand === 'flush' ? 'active' : '')}>
+                    <p className="item-5">Flush</p><span className="multiplier">{prizes[4].value * multiplier}</span>
                 </div>
-                <div className="tb tb-6">
-                    <p className="item-6">Straight</p><span className="multiplier">x4</span>
+                <div className={"tb tb-6 " +
+                    (winningHand === 'straight' ? 'active' : '')}>
+                    <p className="item-6">Straight</p><span className="multiplier">{prizes[5].value * multiplier}</span>
                 </div>
-                <div className="tb tb-7">
-                    <p className="item-7">3 of a kind</p><span className="multiplier">x3</span>
+                <div className={"tb tb-7 " +
+                    (winningHand === 'three-of-a-kind' ? 'active' : '')}>
+                    <p className="item-7">3 of a kind</p><span className="multiplier">
+                        {prizes[6].value * multiplier}</span>
                 </div>
-                <div className="tb tb-8">
-                    <p className="item-8">2 pairs</p><span className="multiplier">x2</span>
+                <div
+                    className={"tb tb-8 " +
+                        (winningHand === 'two-pair' ? 'active' : '')}>
+                    <p className="item-8">2 pairs</p><span className="multiplier">
+                        {prizes[7].value * multiplier}</span>
                 </div>
-                <div className="tb tb-9">
-                    <p className="item-9">Jacks or better</p><span className="multiplier">x1</span>
+                <div
+                    className={"tb tb-9 " +
+                        (winningHand === 'jacks-or-better' ? 'active' : '')}>
+                    <p className="item-9">Jacks or better</p><span className="multiplier">
+                        {prizes[8].value * multiplier}</span>
                 </div>
             </div>
 
@@ -44,7 +62,7 @@ const PayTable = (props) => {
 }
 
 const Card = (props) => {
-    const { value, suit, click, id } = props;
+    const { value, suit, click, id, disabled } = props;
     let color = ''
     if (suit === '♥' || suit === '♦') {
         color = 'red';
@@ -56,7 +74,7 @@ const Card = (props) => {
         <div
             onClick={click}
             data-value={`${value}${suit}`}
-            className={`card ${color}`}
+            className={`card ${color} ${disabled ? 'disabled' : ''}`}
             id={id}
         >
             {value}
@@ -98,6 +116,7 @@ class Hand {
 class Game extends Component {
     state = {
         isDeal: true,
+        isDisabled: true,
         credits: 100,
         creditsWon: 0,
         bet: 1,
@@ -106,6 +125,8 @@ class Game extends Component {
         messageType: 'normal',
 
         held: [false, false, false, false, false],
+        winningHand: '',
+
 
         prizes: [
             {
@@ -125,7 +146,7 @@ class Game extends Component {
             },
             {
                 pokerHand: 'full-house',
-                message: "Great, it's a flush! You win ",
+                message: "Great, it's a full house! You win ",
                 value: 9,
             },
             {
@@ -214,11 +235,13 @@ class Game extends Component {
                 dealtCards: dealt,
                 nextCards: next,
                 isDeal: false,
+                isDisabled: false,
                 btnInfo: 'DRAW',
                 message: 'Choose cards to hold',
                 messageType: 'normal',
                 credits: this.state.credits - this.state.bet,
                 held: [false, false, false, false, false],
+                winningHand: null,
             });
         } else {
             let heldItems = [...this.state.held];
@@ -249,21 +272,27 @@ class Game extends Component {
                 this.setState({
                     creditsWon: 0,
                     messageType: 'lose',
-                    message: 'You lose'
-
+                    message: 'You lose',
+                    winningHand: null,
                 });
             } else {
                 let handMessage = '';
+                let winningHand = '';
+
                 this.state.prizes.forEach((prize) => {
                     if (analyzedHand === prize.pokerHand) {
                         creditsWon = prize.value * this.state.bet;
-                        handMessage = prize.message
-                    } else return;
+                        handMessage = prize.message;
+                        winningHand = prize.pokerHand;
+                    }
                 })
+                console.log(winningHand)
+
                 this.setState({
                     creditsWon: creditsWon,
                     messageType: 'win',
-                    message: handMessage + creditsWon + '!'
+                    message: handMessage + creditsWon + '!',
+                    winningHand: winningHand,
                 });
             }
 
@@ -271,6 +300,7 @@ class Game extends Component {
                 dealtCards: items,
                 btnInfo: 'DEAL',
                 isDeal: true,
+                isDisabled: true,
                 credits: this.state.credits + creditsWon,
             });
         }
@@ -299,7 +329,13 @@ class Game extends Component {
     render() {
         return (
             <main className="main">
-                <PayTable multiplier={this.state.bet} message={this.state.message} messageType={this.state.messageType} />
+                <PayTable
+                    prizes={this.state.prizes}
+                    multiplier={this.state.bet}
+                    message={this.state.message}
+                    messageType={this.state.messageType}
+                    winningHand={this.state.winningHand}
+                />
                 <div className="board">
                     <div className="board-info">
                         <p className="a1 action-info">
@@ -324,30 +360,35 @@ class Game extends Component {
                             click={this.handleCardClick}
                             value={this.state.dealtCards[0].value}
                             suit={this.state.dealtCards[0].suit}
+                            disabled={this.state.isDisabled}
                         />
                         <Card
                             id={1}
                             click={this.handleCardClick}
                             value={this.state.dealtCards[1].value}
                             suit={this.state.dealtCards[1].suit}
+                            disabled={this.state.isDisabled}
                         />
                         <Card
                             id={2}
                             click={this.handleCardClick}
                             value={this.state.dealtCards[2].value}
                             suit={this.state.dealtCards[2].suit}
+                            disabled={this.state.isDisabled}
                         />
                         <Card
                             id={3}
                             click={this.handleCardClick}
                             value={this.state.dealtCards[3].value}
                             suit={this.state.dealtCards[3].suit}
+                            disabled={this.state.isDisabled}
                         />
                         <Card
                             id={4}
                             click={this.handleCardClick}
                             value={this.state.dealtCards[4].value}
                             suit={this.state.dealtCards[4].suit}
+                            disabled={this.state.isDisabled}
                         />
                     </div>
                 </div>

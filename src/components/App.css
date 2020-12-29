@@ -82,6 +82,11 @@ h1, h2, .message, p, span, .card{
     user-select: none;
 }
 
+.card.disabled{
+    pointer-events: none;
+    cursor: default;
+}
+
 h1 {
     font-size: 6rem;
     line-height: 3.5rem;
@@ -157,11 +162,38 @@ p, .multiplier{
 
 .tb:hover{
     border: none;
-
     color: var(--dark-color);
     background: -webkit-linear-gradient(var(--primary-color), var(--primary2-color));
     opacity: 0.8;
 }
+
+.tb.active{
+    border: none;
+
+    animation: winner 2.82s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes winner {
+    10%, 90% {
+        background: none;
+    }
+
+    20%, 80% {
+        background: -webkit-linear-gradient(var(--primary-color), var(--primary2-color));
+        opacity: 0.8;
+
+    }
+
+    30%, 50%, 70% {
+        background: none;
+    }
+
+    40%, 60% {
+        background: -webkit-linear-gradient(var(--primary-color), var(--primary2-color));
+        opacity: 0.8;
+
+    }
+  }
 
 .tb-2, .tb-3{
     grid-column: 1;
