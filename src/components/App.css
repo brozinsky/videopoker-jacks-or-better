@@ -415,6 +415,7 @@ p, .multiplier{
 
 button:hover {
     opacity: 1;
+    cursor: pointer;
 }
 
 button:active {

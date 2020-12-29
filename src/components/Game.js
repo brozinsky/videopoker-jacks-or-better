@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 import Deck from './Deck.js';
 
 const PayTable = (props) => {
-    const { message, messageType } = props;
+    const { message, messageType, multiplier } = props;
     return (
         <>
             <div className="pay-table">
                 <h2 className="table-title">Pay table</h2>
                 <div className="tb tb-1">
-                    <p className="item-1">Royal flush</p><span className="multiplier">x250</span>
+                    <p className="item-1">Royal flush</p><span className="multiplier">{250 * multiplier}</span>
                 </div>
                 <div className="tb tb-2">
                     <p className="item-2">Straight flush</p><span className="multiplier">x50</span>
@@ -64,16 +64,96 @@ const Card = (props) => {
     );
 }
 
+const faces = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+const suits = ['♥', '♦', '♣', '♠'];
+
+class Hand {
+    constructor(pokerHand) {
+        this.faces = pokerHand.map(card => faces.indexOf(card.slice(0, -1)));
+        this.suits = pokerHand.map(card => suits.indexOf(card.slice(-1)));
+
+        this.groups = faces.map((face, i) => this.faces.filter(j => i === j).length).sort((x, y) => y - x);
+        this.groupsJOB = faces.map((face, i) => this.faces.filter(j => i === j && i > 8).length).sort((x, y) => y - x);
+
+        this.shifted = this.faces.map(x => (x + 1) % 13);
+        this.distance = Math.min(Math.max(...this.faces) - Math.min(...this.faces), Math.max(...this.shifted) - Math.min(...this.shifted));
+
+        this.flush = this.suits.every(suit => suit === this.suits[0]);
+        this.straight = this.groups[0] === 1 && this.distance < 5;;
+    }
+    analyze() {
+
+        if (this.straight && this.flush && this.faces.includes(12) && !this.faces.includes(0)) return 'royal-flush';
+        else if (this.straight && this.flush) return 'straight-flush';
+        else if (this.groups[0] === 4) return 'four-of-a-kind';
+        else if (this.groups[0] === 3 && this.groups[1] === 2) return 'full-house';
+        else if (this.straight) return 'straight';
+        else if (this.groups[0] === 3) return 'three-of-a-kind';
+        else if (this.groups[0] === 2 && this.groups[1] === 2) return 'two-pair';
+        else if (this.groups[0] === 2 && this.groupsJOB[0] === 2) return 'jacks-or-better';
+        else return 'loss';
+    }
+}
+
 class Game extends Component {
     state = {
         isDeal: true,
-        cash: 100,
+        credits: 100,
+        creditsWon: 0,
         bet: 1,
         btnInfo: 'DEAL',
         message: 'Press the button to play',
         messageType: 'normal',
 
         held: [false, false, false, false, false],
+
+        prizes: [
+            {
+                pokerHand: 'royal-flush',
+                message: "Jackpot!!! It's a Royal FLush!!! You win ",
+                value: 250,
+            },
+            {
+                pokerHand: 'straight-flush',
+                message: "Superb! It's a Straight FLush! You win ",
+                value: 50,
+            },
+            {
+                pokerHand: 'four-of-a-kind',
+                message: "Superb! Four of a kind! You win ",
+                value: 25,
+            },
+            {
+                pokerHand: 'full-house',
+                message: "Great, it's a flush! You win ",
+                value: 9,
+            },
+            {
+                pokerHand: 'flush',
+                message: "Great, it's a flush! You win ",
+                value: 6,
+            },
+            {
+                pokerHand: 'straight',
+                message: "Great, it's a straight. You win ",
+                value: 4,
+            },
+            {
+                pokerHand: 'three-of-a-kind',
+                message: 'Three of a kind, you win ',
+                value: 3,
+            },
+            {
+                pokerHand: 'two-pair',
+                message: 'Two pair, you win ',
+                value: 2,
+            },
+            {
+                pokerHand: 'jacks-or-better',
+                message: 'Jacks or better, you win ',
+                value: 1,
+            },
+        ],
 
         dealtCards: [
             {
@@ -135,7 +215,10 @@ class Game extends Component {
                 nextCards: next,
                 isDeal: false,
                 btnInfo: 'DRAW',
-                message: 'Choose cards to hold'
+                message: 'Choose cards to hold',
+                messageType: 'normal',
+                credits: this.state.credits - this.state.bet,
+                held: [false, false, false, false, false],
             });
         } else {
             let heldItems = [...this.state.held];
@@ -152,12 +235,43 @@ class Game extends Component {
                 item = nextItem[index];
                 items[index] = item;
             })
+
+            let itemsSuits = items.map(card => card.suit);
+            let itemsFaces = items.map(card => card.value);
+            let pokerHand = itemsFaces.map((e, i) => e + itemsSuits[i])
+            const hand = new Hand(pokerHand)
+
+            const analyzedHand = hand.analyze();
+
+            let creditsWon = null;
+
+            if (analyzedHand === 'loss') {
+                this.setState({
+                    creditsWon: 0,
+                    messageType: 'lose',
+                    message: 'You lose'
+
+                });
+            } else {
+                let handMessage = '';
+                this.state.prizes.forEach((prize) => {
+                    if (analyzedHand === prize.pokerHand) {
+                        creditsWon = prize.value * this.state.bet;
+                        handMessage = prize.message
+                    } else return;
+                })
+                this.setState({
+                    creditsWon: creditsWon,
+                    messageType: 'win',
+                    message: handMessage + creditsWon + '!'
+                });
+            }
+
             this.setState({
                 dealtCards: items,
-                message: 'Jacks or better, you win!',
-                messageType: 'win',
                 btnInfo: 'DEAL',
                 isDeal: true,
+                credits: this.state.credits + creditsWon,
             });
         }
     }
@@ -185,7 +299,7 @@ class Game extends Component {
     render() {
         return (
             <main className="main">
-                <PayTable message={this.state.message} messageType={this.state.messageType} />
+                <PayTable multiplier={this.state.bet} message={this.state.message} messageType={this.state.messageType} />
                 <div className="board">
                     <div className="board-info">
                         <p className="a1 action-info">
@@ -241,7 +355,7 @@ class Game extends Component {
                 < div className="panel panel-action" >
                     <div className="cash">
                         <p className="name">Credits</p>
-                        <span className="money">{this.state.cash}</span>
+                        <span className="money">{this.state.credits}</span>
                     </div>
                     <div className="bet">
                         <p className="name">Bet</p>
