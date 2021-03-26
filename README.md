@@ -1,3 +1,9 @@
+# Videopoker: Jacks or Better
+
+Jacks or Better is the most common casino game variation of video poker based on five-card draw poker. It's a mix of a slots machine and poker. My first application where I used React as a main technology. Styling made with simple CSS. Design in Figma.
+
+## Getting Started
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
@@ -66,3 +72,9 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 ### `npm run build` fails to minify
 
 This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+
+
+## Built With
+
+- [React](https://reactjs.org/)
+- [Figma](https://www.figma.com/)
