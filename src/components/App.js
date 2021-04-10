@@ -24,10 +24,11 @@ class App extends Component {
   render() {
     return (
       <>
-        <Header />
-        <Game />
-        <Footer />
-
+        <div className="wrapper">
+          <Header />
+          <Game />
+          <Footer />
+        </div>
         {/* <img class="frame tl" src="./svg/decorations.svg" />
         <img class="frame tr" src="./svg/decorations.svg" />
         <img class="frame bl" src="./svg/decorations.svg" />
