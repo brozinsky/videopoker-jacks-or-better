@@ -123,6 +123,7 @@ class Game extends Component {
         btnInfo: 'DEAL',
         message: 'Press the button to play',
         messageType: 'normal',
+        gameOver: false,
 
         held: [false, false, false, false, false],
         winningHand: '',
@@ -226,84 +227,99 @@ class Game extends Component {
     }
 
     handleClick = () => {
-        if (this.state.isDeal === true) {
-            const deck = new Deck();
-            deck.shuffle();
-            let dealt = deck.cards.slice(0, 5)
-            let next = deck.cards.slice(5, 10)
-            this.setState({
-                dealtCards: dealt,
-                nextCards: next,
-                isDeal: false,
-                isDisabled: false,
-                btnInfo: 'DRAW',
-                message: 'Choose cards to hold',
-                messageType: 'normal',
-                credits: this.state.credits - this.state.bet,
-                held: [false, false, false, false, false],
-                winningHand: null,
-            });
-        } else {
-            let heldItems = [...this.state.held];
-            let indexes = [];
-            for (let i = 0; i < heldItems.length; i++) {
-                if (heldItems[i] === false) {
-                    indexes.push(i);
+        console.log(this.state.gameOver)
+        if (!this.state.gameOver) {
+            if (this.state.isDeal === true) {
+                console.log(this.state.credits)
+                if (this.state.credits <= this.state.bet) {
+                    this.setState({
+                        gameOver: true,
+                    })
                 }
-            }
-            let nextItem = [...this.state.nextCards];
-            let items = [...this.state.dealtCards];
-            indexes.forEach(index => {
-                let item = items[index];
-                item = nextItem[index];
-                items[index] = item;
-            })
-
-            let itemsSuits = items.map(card => card.suit);
-            let itemsFaces = items.map(card => card.value);
-            let pokerHand = itemsFaces.map((e, i) => e + itemsSuits[i])
-            const hand = new Hand(pokerHand)
-
-            const analyzedHand = hand.analyze();
-
-            let creditsWon = null;
-
-            if (analyzedHand === 'loss') {
+                const deck = new Deck();
+                deck.shuffle();
+                let dealt = deck.cards.slice(0, 5)
+                let next = deck.cards.slice(5, 10)
                 this.setState({
-                    creditsWon: 0,
-                    messageType: 'lose',
-                    message: 'You lose',
+                    dealtCards: dealt,
+                    nextCards: next,
+                    isDeal: false,
+                    isDisabled: false,
+                    btnInfo: 'DRAW',
+                    message: 'Choose cards to hold',
+                    messageType: 'normal',
+                    credits: this.state.credits - this.state.bet,
+                    held: [false, false, false, false, false],
                     winningHand: null,
                 });
             } else {
-                let handMessage = '';
-                let winningHand = '';
-
-                this.state.prizes.forEach((prize) => {
-                    if (analyzedHand === prize.pokerHand) {
-                        creditsWon = prize.value * this.state.bet;
-                        handMessage = prize.message;
-                        winningHand = prize.pokerHand;
+                let heldItems = [...this.state.held];
+                let indexes = [];
+                for (let i = 0; i < heldItems.length; i++) {
+                    if (heldItems[i] === false) {
+                        indexes.push(i);
                     }
+                }
+                let nextItem = [...this.state.nextCards];
+                let items = [...this.state.dealtCards];
+                indexes.forEach(index => {
+                    let item = items[index];
+                    item = nextItem[index];
+                    items[index] = item;
                 })
-                console.log(winningHand)
+
+                let itemsSuits = items.map(card => card.suit);
+                let itemsFaces = items.map(card => card.value);
+                let pokerHand = itemsFaces.map((e, i) => e + itemsSuits[i])
+                const hand = new Hand(pokerHand)
+
+                const analyzedHand = hand.analyze();
+
+                let creditsWon = null;
+
+                if (analyzedHand === 'loss') {
+                    this.setState({
+                        creditsWon: 0,
+                        messageType: 'lose',
+                        message: 'You lose',
+                        winningHand: null,
+                    });
+                } else {
+                    let handMessage = '';
+                    let winningHand = '';
+
+                    this.state.prizes.forEach((prize) => {
+                        if (analyzedHand === prize.pokerHand) {
+                            creditsWon = prize.value * this.state.bet;
+                            handMessage = prize.message;
+                            winningHand = prize.pokerHand;
+                        }
+                    })
+                    console.log(winningHand)
+
+                    this.setState({
+                        creditsWon: creditsWon,
+                        messageType: 'win',
+                        message: handMessage + creditsWon + '!',
+                        winningHand: winningHand,
+                    });
+                }
 
                 this.setState({
-                    creditsWon: creditsWon,
-                    messageType: 'win',
-                    message: handMessage + creditsWon + '!',
-                    winningHand: winningHand,
+                    dealtCards: items,
+                    btnInfo: 'DEAL',
+                    isDeal: true,
+                    isDisabled: true,
+                    credits: this.state.credits + creditsWon,
                 });
             }
-
+        } else {
             this.setState({
-                dealtCards: items,
-                btnInfo: 'DEAL',
-                isDeal: true,
-                isDisabled: true,
-                credits: this.state.credits + creditsWon,
-            });
+                message: 'You have no credits. You lose.',
+                messageType: 'alert',
+            })
         }
+
     }
 
     handleCardClick = (e) => {

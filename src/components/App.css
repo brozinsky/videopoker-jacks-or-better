@@ -529,7 +529,7 @@ button:active {
         max-width: 90vw;
         margin: auto !important;
         justify-content: space-around;
-        max-height: 85vh;
+        max-height: 100vh;
     }
     .wrapper{
         display: flex;
