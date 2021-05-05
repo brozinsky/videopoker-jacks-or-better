@@ -321,6 +321,9 @@ p, .multiplier{
     background-size: cover;
     border-radius: 15px;
 }
+.card-back-img{
+    height: 202px;
+}
 
 .card{
     height: 200px;
@@ -573,6 +576,9 @@ button:active {
     .card-back, .card{
         height: 80px;
         width: 52px;
+    }
+    .card-back-img{
+        height: 82px;
     }
     .card{
         font-size: 2.2rem;

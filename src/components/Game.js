@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Deck from './Deck.js';
+import cardBackImg from '../img/card-back.svg';
 
 const PayTable = (props) => {
     const { message, messageType, multiplier, prizes, winningHand } = props;
@@ -77,6 +78,7 @@ const Card = (props) => {
             className={`card ${color} ${disabled ? 'disabled' : ''}`}
             id={id}
         >
+            { value ? null : <img className="card-back-img" src={cardBackImg} alt="Card back" />}
             {value}
         </div>
     );
@@ -227,10 +229,8 @@ class Game extends Component {
     }
 
     handleClick = () => {
-        console.log(this.state.gameOver)
         if (!this.state.gameOver) {
             if (this.state.isDeal === true) {
-                console.log(this.state.credits)
                 if (this.state.credits <= this.state.bet) {
                     this.setState({
                         gameOver: true,
