@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/videopoker-jacks-or-better/precache-manifest.77f0453ddf13370c01e7ae64b7812a7c.js"
+  "/videopoker-jacks-or-better/precache-manifest.2b1331887373cdd0add271dd50ceccef.js"
 );
 
 workbox.clientsClaim();
