@@ -1,16 +1,43 @@
 # Videopoker: Jacks or Better
 
-Jacks or Better is the most common casino game variation of video poker based on five-card draw poker. It's a mix of a slots machine and poker. My first application where I used React as a main technology. Styling made with simple CSS. Design in Figma.
+## About The Project - [Live Demo](https://brozinsky.github.io/videopoker-jacks-or-better)
+
+Jacks or Better is the first video poker game, introduced in the 1970’s, it was called Draw Poker and is better known today as Jacks or Better. This is the most common version of video poker and is based on the regular 5-card draw poker that has been a popular casino game for centuries. The game uses a single deck of 52 cards and upon every draw, the player is given 5 cards. The lowest winning hand is Jacks or Better and the best hand you can have is Royal Flush. 
+
+![overview-gif](doc/overview.gif)
+
+### Built With
+
+* Main technology - [React](https://reactjs.org/)
+* Styling made with simple CSS. 
+* Design in [Figma](https://www.figma.com/)
+
+## How To Play
+
+When a player starts a new video poker game, the first thing to do is place a bet and then, he will be dealt 5 cards. In order to achieve the strongest winning hand, the player can choose to keep some cards and exchange others. This is easily done by selecting each card you wish to hold and click on the Deal/Draw button. The decision which cards to keep and which to replace with new ones will make the difference between winning and losing the round. Of course, the goal should always be winning more coins than you originally bet.
+
+#### Hand Rankings
+
+Hands and examples:
+* Royal Flush: A♥ K♥ Q♥ J♥ 10♥
+* Straight Flush: 10♣ 9♣ 8♣ 7♣ 6♣ 
+* Four of a Kind: Q♥ Q♣ Q♦ Q♠ 3♥
+* Full House: 5♥ 5♣ 5♦ 3♦ 3♥
+* Flush: K♠ 10♠ 6♠ 5♠ 3♠ 
+* Straight: Q♥ J♣ 10♦ 9♠ 8♥
+* Three of a Kind: K♥ K♣ K♦ 9♠ 8♥
+* Two pair: 5♦ 5♣ 3♥ 3♠ 8♥
+* Two of a Kind (Jacks or better): J♥ J♣ 9♠ K♦ 8♥
 
 ## Getting Started
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+### Available Scripts
 
-In the project directory, you can run:
+To get a local copy up and runningTo get a local copy up and running, in the project directory, you can run:
 
-### `npm start`
+#### `npm start`
 
 Runs the app in the development mode.<br>
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
@@ -18,63 +45,8 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 The page will reload if you make edits.<br>
 You will also see any lint errors in the console.
 
-### `npm test`
-
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
+### Learn More
 
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
-
-
-## Built With
-
-- [React](https://reactjs.org/)
-- [Figma](https://www.figma.com/)
